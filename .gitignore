@@ -1,0 +1,37 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large Raw Datasets (annotations and code remain tracked)
+data/train/*.jpg
+data/train/*.png
+data/valid/*.jpg
+data/valid/*.png
+data/test/*.jpg
+data/test/*.png
+Dust devil detection dataset/
+
+# Caching & dynamic outputs
+backend/cache/*
+!backend/cache/.gitkeep
+
+# Storage & Temporary test outputs
+scratch/
+.venv/
+venv/
+ENV/
+env/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node modules (if any)
+node_modules/
+
+# OS generated files
+.DS_Store
+Thumbs.db

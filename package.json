@@ -1,0 +1,26 @@
+{
+  "name": "martian-dust-devil-detection",
+  "version": "2.0.0",
+  "description": "Martian Eye — Martian Dust Devil Detection Platform & Mission Control Web Application",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "test": "python test_backend.py"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.3",
+    "open": "^10.1.0"
+  },
+  "keywords": [
+    "mars",
+    "dust-devil",
+    "deep-learning",
+    "multiscale-attention",
+    "transformer",
+    "explainable-ai"
+  ],
+  "author": "Google DeepMind Advanced Agentic Coding",
+  "license": "MIT"
+}

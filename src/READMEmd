@@ -1,0 +1,114 @@
+# Martian Eye — Autonomous Dust Devil Intelligence
+
+> An end-to-end computer vision and explainable AI (XAI) platform for autonomous detection, multi-object localization, and morphology profiling of Martian dust devil vortices.
+
+---
+
+## Description
+
+**Martian Eye** is a specialized web application and deep-learning pipeline designed for real-time atmospheric surveillance on Mars. The system processes planetary surface imagery (MER Navcam, Sol Pancam) and orbital satellite data (HiRISE) to identify transient dust devil column structures under challenging terrain and atmospheric conditions.
+
+The platform addresses high false-positive rates caused by Martian topography—such as crater rims, dune ripples, and mesa shadows—by combining a primary **Multiscale Spatial Attention Transformer** with a **Stage-2 Hard-Negative Screening Classifier**. The web frontend provides interactive XAI telemetry (Grad-CAM heatmaps), uncertainty estimation, morphology metrics, cross-mission domain adaptation benchmarks, and a 3D perspective HTML5 Canvas background.
+
+---
+
+## Key Features
+
+- **Multiscale Attention Transformer Backbone**: Hybrid ResNet-34 backbone with a 4-head spatial cross-attention block (`MultiscaleSpatialAttention`) for multiscale feature fusion.
+- **Multi-Object Plume Detection**: Identifies and bounds single or multiple vertical dust devil plumes per image frame using vertical structure morphological filters (`cv2.MORPH_TOPHAT` / `cv2.MORPH_BLACKHAT`), Sobel vertical gradients, and Non-Maximum Suppression (NMS).
+- **Strict Negative Detection Gate**: Evaluates candidate confidence against a configurable threshold slider; non-plume surface frames cleanly return `No dust devil found` with zero false-positive bounding boxes.
+- **Candidate-Focused Grad-CAM Heatmaps**: Spatial attention heatmaps (`GradCAMExplainer`) concentrated around candidate regions using a 2D Gaussian focus kernel.
+- **Stage-2 Hard-Negative Verifier**: Hard-negative screening model (`HardNegativeFalsePositiveClassifier`) built on MobileNet-V3 Small to screen out topographic landforms.
+- **Atmospheric Morphology Analysis**: Calculates candidate width, height, aspect ratio, orientation angle, and estimated physical dimensions (`DustDevilMorphologyAnalyzer`).
+- **Dynamic Port & Server Launcher**: Node.js launcher (`server.js`) that spawns a Python Uvicorn backend process with automatic port fallback (`3000`, `3001`, `3002`) and Express reverse proxying.
+- **3D Solar System Canvas Engine**: HTML5 Canvas rendering 8 revolving planets along 3D elliptical orbits around a luminous central Sun, with upper spiral galaxy nebulae.
+
+---
+
+## Technical Implementation & Web Platform APIs
+
+- **Candidate-Focused Spatial Attention**: Blends raw Transformer feature map activations with a 2D Gaussian spatial mask calculated from candidate bounding box coordinates to isolate attention hotspots from background terrain.
+- **[Canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)**: Used in `frontend/index.html` to render a 60 FPS animated 3D-perspective solar system with dynamic radial gradients and orbital ellipses (`ctx.ellipse`, `ctx.createRadialGradient`).
+- **[Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)**: Executes asynchronous HTTP POST and GET requests for multipart form upload (`/api/detect`) and JSON telemetry endpoints (`/api/experiments/*`).
+- **[URL.createObjectURL()](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static)**: Generates instant client-side image previews for user-uploaded Mars images without waiting for server round-trips.
+- **[FormData API](https://developer.mozilla.org/en-US/docs/Web/API/FormData)**: Encapsulates image files uploaded from input elements for binary transmission via multipart form data.
+- **[Node.js Child Process (`spawn`)](https://nodejs.org/api/child_process.html#child_processspawncommand-args-options)**: Asynchronously launches the Uvicorn Python FastAPI process on an automatically assigned free port.
+
+---
+
+## Technologies and Libraries
+
+### Backend & AI Pipeline
+
+| Technology / Library | Purpose | Documentation |
+| :--- | :--- | :--- |
+| **Python 3.10+** | Core AI pipeline and service execution | [python.org](https://www.python.org/) |
+| **PyTorch** | Deep learning framework for detector and verifier models | [pytorch.org](https://pytorch.org/) |
+| **FastAPI** | High-performance asynchronous REST API backend (`backend/app.py`) | [fastapi.tiangolo.com](https://fastapi.tiangolo.com/) |
+| **Uvicorn** | ASGI server implementation serving the FastAPI application | [uvicorn.org](https://www.uvicorn.org/) |
+| **OpenCV (`cv2`)** | Image processing, morphological filtering, and colormap generation | [opencv.org](https://opencv.org/) |
+| **Pillow (PIL)** | Image conversion, formatting, and JPEG encoding | [python-pillow.org](https://python-pillow.org/) |
+
+### Frontend & Web Server
+
+| Technology / Library | Purpose | Documentation |
+| :--- | :--- | :--- |
+| **Node.js** | Web server execution and child process orchestration | [nodejs.org](https://nodejs.org/) |
+| **Express** | Static asset serving and API reverse proxying (`server.js`) | [expressjs.com](https://expressjs.com/) |
+| **http-proxy-middleware** | Proxies HTTP API requests from Express to FastAPI backend | [github.com/chimurai/http-proxy-middleware](https://github.com/chimurai/http-proxy-middleware) |
+| **Tailwind CSS (CDN)** | Utility-first styling for dark glassmorphism layout | [tailwindcss.com](https://tailwindcss.com/) |
+| **Chart.js (CDN)** | Interactive bar and line charts for SSL and Domain Adaptation tabs | [chartjs.org](https://www.chartjs.org/) |
+
+---
+
+## Fonts and External Assets
+
+### Fonts
+- **Plus Jakarta Sans**: Primary UI sans-serif typeface loaded via [Google Fonts](https://fonts.google.com/specimen/Plus+Jakarta+Sans).
+- **JetBrains Mono**: Monospace font used for telemetry metrics, JSON outputs, and technical specs, loaded via [Google Fonts](https://fonts.google.com/specimen/JetBrains+Mono).
+
+### Asset Dependencies
+- **Tailwind CSS CDN**: Loaded from `https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js` and `https://cdn.tailwindcss.com`.
+- **Chart.js CDN**: Loaded from `https://cdn.jsdelivr.net/npm/chart.js`.
+
+---
+
+## Project Structure
+
+```text
+martian-dust-devil-detection/
+├── backend/
+│   ├── cache/                  # Generated static JPEG overlay assets
+│   ├── app.py                  # FastAPI REST API routes and static mounting
+│   └── pipeline.py             # Unified Martian Eye inference & processing pipeline
+├── checkpoints/
+│   ├── metrics_summary.json    # Evaluated summary metrics
+│   ├── multiscale_detector.pt  # Trained Multiscale Attention Detector weights
+│   └── fp_verifier.pt          # Trained Hard-Negative Verifier weights
+├── data/
+│   ├── train/                  # COCO annotated training dataset
+│   ├── valid/                  # COCO annotated validation dataset
+│   └── test/                   # COCO annotated test dataset
+├── frontend/
+│   └── index.html              # Main Single Page Application UI & Canvas animation
+├── src/
+│   ├── domain_adaptation/
+│   │   └── adapter.py          # Cross-Mission domain adaptation benchmarks
+│   ├── evaluation/
+│   │   └── ablation.py         # Ablation study matrix runner (E0 -> E5)
+│   ├── explainability/
+│   │   └── gradcam.py          # Candidate-focused Grad-CAM attention heatmaps
+│   ├── morphology/
+│   │   └── analyzer.py         # Aspect ratio and column dimension analysis
+│   ├── models/
+│   │   ├── fp_classifier.py    # MobileNet-V3 hard-negative screening model
+│   │   └── multiscale_transformer.py # ResNet-34 + Spatial Attention Detector
+│   ├── self_supervised/
+│   │   └── ssl_runner.py       # SSL benchmark runner (25%, 50%, 100%)
+│   └── uncertainty/
+│       └── calibration.py      # Epistemic uncertainty estimator
+├── package.json                # Node.js dependencies and scripts
+├── server.js                   # Node.js launcher with Express proxy & dynamic porting
+├── test_backend.py             # Backend unit test runner
+├── test_ui_pipeline.py         # End-to-end integration test runner
+└── train_model.py              # PyTorch model training entrypoint

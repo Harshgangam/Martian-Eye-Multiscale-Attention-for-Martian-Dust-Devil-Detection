@@ -1,0 +1,14 @@
+{
+  "model_name": "Multiscale Attention Transformer (ResNet-34 Backbone)",
+  "test_accuracy": 0.924,
+  "precision": 0.948,
+  "recall": 0.842,
+  "f1_score": 0.892,
+  "mAP": 0.912,
+  "iou": 0.794,
+  "trained_epochs": 2,
+  "train_samples": 873,
+  "valid_samples": 270,
+  "test_samples": 131,
+  "timestamp": "2026-10-05 17:56:30"
+}

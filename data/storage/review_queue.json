@@ -1,0 +1,26 @@
+[
+  {
+    "id": "REQ-1791479191-CACC",
+    "status": "PENDING_HUMAN_REVIEW",
+    "timestamp": "2026-10-08 17:06:31 UTC",
+    "file_name": "test_dust_devil.jpg",
+    "class_name": "Dust devil",
+    "confidence": 0.85,
+    "verification_score": 0.88,
+    "uncertainty": "Low",
+    "suggested_action": "Human review",
+    "morphology": {
+      "width_px": 28,
+      "height_px": 65
+    },
+    "bounding_box": {
+      "pixel_px": [
+        840,
+        24,
+        868,
+        89
+      ]
+    },
+    "images": {}
+  }
+]
